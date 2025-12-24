@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to Express & TypeScript Server');
+  res.send('Welcome to Express Server');
 });
 
 export default app;
