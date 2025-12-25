@@ -11,6 +11,27 @@ const createUser = async (user: IUser) => {
 	return await User.create(user);
 }
 
+const updateUserById = async (userId: string, payload: Partial<IUser>) => {
+  const result = await User.findByIdAndUpdate({ _id: userId }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
+
+const deleteUserById = async (userId: string) => {
+  const result = await User.findByIdAndDelete(userId);
+  return result;
+};
+
+const findUserById = async (userId: string) => {
+  return await User.findById(userId);
+};
+
 export const UserService = {
 	createUser,
+  updateUserById,
+  deleteUserById,
+	findUserById,
+
 }
