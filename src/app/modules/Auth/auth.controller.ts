@@ -5,7 +5,8 @@ import { AuthServices } from './auth.service';
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
-  const {  accessToken } = result;
+  console.log(result)
+  const {  accessToken, jwtPayload } = result;
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -13,7 +14,10 @@ const loginUser = catchAsync(async (req, res) => {
     message: 'User is logged in successfully!',
     data: {
       accessToken,
-      
+      _id: jwtPayload._id,
+      email: jwtPayload.email,
+      role: jwtPayload.role,
+      name: jwtPayload.name
     },
   });
 });

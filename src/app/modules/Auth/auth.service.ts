@@ -8,29 +8,27 @@ import { SignOptions } from "jsonwebtoken";
 
 const loginUser = async (payload: TLoginUser) => {
   // check if user exists
-  let user = await User.findOne({ email: payload.email });
+  let user = await User.findOne({ email: payload.email }).select('+password');
 
-  // if user does not exist, register
   if (!user) {
-    user = await registerUser(payload);
-  } else {
-    // if password provided, validate
-    if (payload.password) {
-      const isPasswordMatched = await bcryptJs.compare(
-        payload.password,
-        user.password
-      );
-
-      if (!isPasswordMatched) {
-        throw new Error("Password Incorrect!");
-      }
-    }
+    throw new Error("User not found!");
   }
+
+  const isPasswordMatched = await bcryptJs.compare(
+    payload.password,
+    user.password
+  );
+
+  if (!isPasswordMatched) {
+    throw new Error("Password Incorrect!");
+  }
+
 
   const jwtPayload = {
     email: user.email,
     role: user.role,
     _id: user._id,
+    name: user.name
   };
 
   const accessToken = createToken(
@@ -41,6 +39,7 @@ const loginUser = async (payload: TLoginUser) => {
 
   return {
     accessToken,
+    jwtPayload
   };
 };
 
