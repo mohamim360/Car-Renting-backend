@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
-import { User } from "../modules/user/user.model";
+import { User } from "../modules/User/user.model";
 import catchAsync from "../utils/catchAsync";
 import { USER_ROLE } from "../utils/userUtils";
 
@@ -18,8 +18,8 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
     }
 
     // Extract token from "Bearer TOKEN" format
-    const token = authHeader.startsWith('Bearer ') 
-      ? authHeader.slice(7) 
+    const token = authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7)
       : authHeader;
 
     // checking if the given token is valid

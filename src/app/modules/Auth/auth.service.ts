@@ -1,6 +1,6 @@
 import config from "../../config";
 import bcryptJs from "bcryptjs";
-import { User } from "../user/user.model";
+import { User } from "../User/user.model";
 import { TLoginUser } from "./auth.interface";
 import { createToken } from "../../utils/authUtils";
 import { USER_ROLE } from "../../utils/userUtils";
@@ -8,7 +8,7 @@ import { SignOptions } from "jsonwebtoken";
 
 const loginUser = async (payload: TLoginUser) => {
   // check if user exists
-  let user = await User.findOne({ email: payload.email }).select('+password');
+  let user = await User.findOne({ email: payload.email }).select("+password");
 
   if (!user) {
     throw new Error("User not found!");
@@ -23,12 +23,11 @@ const loginUser = async (payload: TLoginUser) => {
     throw new Error("Password Incorrect!");
   }
 
-
   const jwtPayload = {
     email: user.email,
     role: user.role,
     _id: user._id,
-    name: user.name
+    name: user.name,
   };
 
   const accessToken = createToken(
@@ -39,7 +38,7 @@ const loginUser = async (payload: TLoginUser) => {
 
   return {
     accessToken,
-    jwtPayload
+    jwtPayload,
   };
 };
 
