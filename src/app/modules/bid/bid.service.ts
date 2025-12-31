@@ -7,7 +7,9 @@ const createBid = async (bid: IBid) => {
 };
 
 const findBidById = async (bidId: string) => {
-  return await Bid.findById(bidId);
+  return await Bid.findById(bidId)
+    .populate("rentId")
+    .populate("driverId");
 };
 
 const updateBidById = async (bidId: string, payload: Partial<IBid>) => {
@@ -15,17 +17,37 @@ const updateBidById = async (bidId: string, payload: Partial<IBid>) => {
     new: true,
     runValidators: true,
   });
+
+  // If bid is accepted, update the rent with driver info and change status
   if (result?.bidStatus === "accepted") {
-    const newResult = await Rent.findByIdAndUpdate(
+    // Update the rent with the driver and change status to ongoing
+    const updatedRent = await Rent.findByIdAndUpdate(
       { _id: result.rentId },
-      { rentStatus: "ongoing" },
+      { 
+        driver: result.driverId,  // Assign driver to rent
+        rentStatus: "ongoing"     // Change status to ongoing
+      },
       {
         new: true,
         runValidators: true,
       }
+    ).populate("user").populate("car").populate("driver");
+
+    // Optionally: Reject all other pending bids for this rent
+    await Bid.updateMany(
+      { 
+        rentId: result.rentId, 
+        _id: { $ne: bidId },  // Exclude current bid
+        bidStatus: "pending"   // Only update pending bids
+      },
+      { 
+        bidStatus: "rejected" 
+      }
     );
-    return newResult;
+
+    return updatedRent;
   }
+  
   return result;
 };
 
@@ -35,7 +57,15 @@ const deleteBidById = async (bidId: string) => {
 };
 
 const getAllBids = async () => {
-  return await Bid.find().populate("rentId").populate("driverId");
+  return await Bid.find()
+    .populate({
+      path: "rentId",
+      populate: [
+        { path: "user" },
+        { path: "car" }
+      ]
+    })
+    .populate("driverId");
 };
 
 export const BidService = {

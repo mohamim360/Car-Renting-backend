@@ -61,10 +61,23 @@ const getAllRents = catchAsync(async (req, res) => {
   });
 });
 
+const getRentsByUserId = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+  const result = await RentService.getRentsByUserId(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User rents are retrieved successfully",
+    data: result,
+  });
+});
+
 export const RentController = {
   createRent,
   findRentById,
   updateRentById,
   deleteRentById,
   getAllRents,
+  getRentsByUserId,
 };

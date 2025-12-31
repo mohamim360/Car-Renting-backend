@@ -37,6 +37,12 @@ router.get(
 );
 
 router.get(
+  "/user/:userId",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  RentController.getRentsByUserId
+);
+
+router.get(
   "/:id",
   auth(USER_ROLE.admin, USER_ROLE.user, USER_ROLE.driver),
   RentController.findRentById

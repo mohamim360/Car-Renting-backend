@@ -10,7 +10,7 @@ const bidSchema: Schema<IBid> = new mongoose.Schema({
 
   driverId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Bid",
+    ref: "User",
     required: true,
   },
   bidAmount: {

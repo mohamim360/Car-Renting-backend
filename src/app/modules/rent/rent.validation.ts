@@ -4,6 +4,7 @@ export const createRentValidationSchema = z.object({
   body: z.object({
     user: z.string(), 
     car: z.string(), 
+    driver: z.string().optional(),
     startingPoint: z.string(),
     destination: z.string(),
   }),

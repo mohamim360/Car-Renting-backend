@@ -7,6 +7,11 @@ const rentSchema: Schema<IRent> = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  driver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false, 
+  },
   car: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Car",

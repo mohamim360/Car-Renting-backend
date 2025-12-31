@@ -8,20 +8,32 @@ import { USER_ROLE } from "../utils/userUtils";
 
 const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
     // checking if the token is missing
-    if (!token) {
+    if (!authHeader) {
       const err = new Error("You are not authorized!");
       (err as any).statusCode = httpStatus.UNAUTHORIZED;
       throw err;
     }
 
+    // Extract token from "Bearer TOKEN" format
+    const token = authHeader.startsWith('Bearer ') 
+      ? authHeader.slice(7) 
+      : authHeader;
+
     // checking if the given token is valid
-    const decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string
-    ) as JwtPayload;
+    let decoded: JwtPayload;
+    try {
+      decoded = jwt.verify(
+        token,
+        config.jwt_access_secret as string
+      ) as JwtPayload;
+    } catch (error) {
+      const err = new Error("Invalid token");
+      (err as any).statusCode = httpStatus.UNAUTHORIZED;
+      throw err;
+    }
 
     const { role, email } = decoded;
 
